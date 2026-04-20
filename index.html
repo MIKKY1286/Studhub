@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudHub</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* subtle glow */
+.glow {
+  filter: blur(80px);
+  opacity: 0.3;
+}
+</style>
+</head>
+
+<body class="bg-[#f3e9e3] text-gray-800">
+
+<!-- HERO -->
+<section class="relative overflow-hidden bg-[#f3e9e3]">
+
+  <!-- NAVBAR (now inside hero) -->
+  <header class="absolute top-0 left-0 w-full flex justify-between items-center px-10 py-6 z-20">
+    
+    <h1 class="text-xl font-bold">StudHub</h1>
+
+    <nav class="hidden md:flex gap-8 text-gray-700">
+      <a href="#" class="border-b-2 border-orange-500 pb-1">Home</a>
+      <a href="./features.html">Features</a>
+      <a href="./pricing.html">Pricing</a>
+      <a href="./contact.html">Contact</a>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <a href="./login.html" class="text-gray-700">Login</a>
+      <a href="./signup.html" class="bg-orange-500 text-white px-5 py-2 rounded-full">
+        Get Started
+      </a>
+    </div>
+
+  </header>
+
+  <!-- HERO CONTENT -->
+    <div class="flex flex-col md:flex-row items-center px-10 pt-20 pb-20 relative">
+    <!-- Background Glow -->
+    <div class="absolute -top-32 -left-32 w-[500px] h-[500px] bg-orange-300/30 blur-3xl rounded-full"></div>
+    <div class="absolute bottom-0 right-0 w-[400px] h-[400px] bg-orange-200/40 blur-2xl rounded-full"></div>
+
+    <!-- LEFT -->
+    <div class="md:w-1/2 space-y-8 relative z-10">
+
+      <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
+        A Smarter Way <br>
+        to Handle <br>
+        <span class="text-orange-500 relative">
+          Student Work
+          <span class="absolute left-0 -bottom-2 w-full h-2 bg-orange-300 rounded-full"></span>
+        </span>
+      </h1>
+
+      <p class="text-gray-600 max-w-md text-lg">
+        Upload assignments, use AI tools, convert files, and manage your academic life in one place.
+      </p>
+
+      <div class="flex gap-4">
+        <a href="./signup.html" class="bg-orange-500 text-white px-8 py-3 rounded-full shadow-md hover:scale-105 transition">
+          Get Started
+        </a>
+        <a href="./features.html" class="border px-8 py-3 rounded-full hover:bg-white transition">
+          Learn More
+        </a>
+      </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="md:w-1/2 flex justify-center mt-16 md:mt-0 relative h-[550px]">
+
+      <div class="absolute top-0 right-0 w-[400px] h-[540px] bg-[#f5cbb2] rounded-b-[240px]"></div>
+      <div class="absolute top-6 right-6 w-[400px] h-[540px] bg-orange-100 rounded-b-[240px] opacity-50"></div>
+
+      <img 
+        src="./assets/images/books-1.jpg"
+        class="absolute top-0 right-0 w-[400px] h-[540px] object-cover rounded-b-[240px] shadow-xl z-10"
+      />
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+ <section class="px-10 py-24 text-center bg-white">
+
+  <!-- Section Header -->
+  <div class="max-w-2xl mx-auto mb-16">
+    <h2 class="text-4xl font-bold text-gray-900 mb-4">
+      Everything You Need in One Place
+    </h2>
+    <p class="text-gray-600">
+      StudHub gives you the tools to manage your academic life smarter, faster, and better.
+    </p>
+  </div>
+
+  <!-- Cards -->
+  <div class="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+
+    <!-- Card 1 -->
+    <div class="bg-[#f9f6f3] p-8 rounded-2xl hover:shadow-xl transition group">
+
+      <div class="w-14 h-14 bg-orange-100 text-orange-500 flex items-center justify-center rounded-full mb-6 mx-auto group-hover:scale-110 transition">
+        📁
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">
+        Smart File Management
+      </h3>
+
+      <p class="text-gray-600">
+        Upload, organize, and access your assignments and projects anytime.
+      </p>
+
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-[#f9f6f3] p-8 rounded-2xl hover:shadow-xl transition group">
+
+      <div class="w-14 h-14 bg-orange-100 text-orange-500 flex items-center justify-center rounded-full mb-6 mx-auto group-hover:scale-110 transition">
+        🤖
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">
+        AI Assistant
+      </h3>
+
+      <p class="text-gray-600">
+        Get help with assignments, summaries, and research instantly.
+      </p>
+
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-[#f9f6f3] p-8 rounded-2xl hover:shadow-xl transition group">
+
+      <div class="w-14 h-14 bg-orange-100 text-orange-500 flex items-center justify-center rounded-full mb-6 mx-auto group-hover:scale-110 transition">
+        🔄
+      </div>
+
+      <h3 class="text-xl font-semibold mb-3">
+        File Conversion
+      </h3>
+
+      <p class="text-gray-600">
+        Convert your documents into any format quickly and easily.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- STATS -->
+<section class="bg-white py-16 grid md:grid-cols-3 text-center">
+
+  <div>
+    <h2 class="text-3xl font-bold text-orange-500">10K+</h2>
+    <p class="text-gray-600">Students</p>
+  </div>
+
+  <div>
+    <h2 class="text-3xl font-bold text-orange-500">50K+</h2>
+    <p class="text-gray-600">Files Uploaded</p>
+  </div>
+
+  <div>
+    <h2 class="text-3xl font-bold text-orange-500">99%</h2>
+    <p class="text-gray-600">Satisfaction</p>
+  </div>
+
+</section>
+
+<!-- CAROUSEL -->
+<section class="px-10 py-24 bg-[#f3e9e3] text-center">
+
+  <!-- Header -->
+  <div class="max-w-2xl mx-auto mb-16">
+    <h2 class="text-4xl font-bold text-gray-900 mb-4">
+      See StudHub in Action
+    </h2>
+    <p class="text-gray-600">
+      A smarter way to manage your academic life.
+    </p>
+  </div>
+
+  <!-- Carousel Wrapper -->
+  <div class="relative max-w-5xl mx-auto overflow-hidden">
+
+    <!-- Slides -->
+    <div id="carousel" class="flex">
+
+      <!-- Slide 1 -->
+      <div class="min-w-full px-4">
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <img src="./assets/images/upload.jpg" class="w-full h-56 object-cover">
+          <div class="p-6 text-left">
+            <h3 class="text-xl font-semibold mb-2">Upload Files</h3>
+            <p class="text-gray-600">Store assignments easily.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="min-w-full px-4">
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <img src="./assets/images/ai-image.jpg" class="w-full h-56 object-cover">
+          <div class="p-6 text-left">
+            <h3 class="text-xl font-semibold mb-2">AI Assistant</h3>
+            <p class="text-gray-600">Get instant help with tasks.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="min-w-full px-4">
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <img src="./assets/images/convert-files.jpg" class="w-full h-56 object-cover">
+          <div class="p-6 text-left">
+            <h3 class="text-xl font-semibold mb-2">Convert Files</h3>
+            <p class="text-gray-600">Switch formats quickly.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="min-w-full px-4">
+        <div class="bg-white rounded-2xl shadow overflow-hidden">
+          <img src="./assets/images/encyclopaedia.jpg" class="w-full h-56 object-cover">
+          <div class="p-6 text-left">
+            <h3 class="text-xl font-semibold mb-2">Make Research</h3>
+            <p class="text-gray-600">Make deep search in encyclopedias.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- WHY STUDENTS CHOOSE STUDHUB -->
+<section class="px-10 py-24 bg-white">
+
+  <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-16">
+
+    <!-- LEFT (TEXT) -->
+    <div class="md:w-1/2 space-y-6">
+
+      <h2 class="text-4xl font-bold text-gray-900">
+        Why Students Choose StudHub
+      </h2>
+
+      <p class="text-gray-600 text-lg">
+        StudHub is designed to simplify your academic life. Everything you need is in one place, so you can focus on what really matters.
+      </p>
+
+      <!-- Benefits -->
+      <div class="space-y-4">
+
+        <div class="flex items-start gap-3">
+          <div class="bg-orange-100 text-orange-500 w-8 h-8 flex items-center justify-center rounded-full">✓</div>
+          <p class="text-gray-700">All your files organized in one workspace</p>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="bg-orange-100 text-orange-500 w-8 h-8 flex items-center justify-center rounded-full">✓</div>
+          <p class="text-gray-700">AI tools to speed up your assignments</p>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="bg-orange-100 text-orange-500 w-8 h-8 flex items-center justify-center rounded-full">✓</div>
+          <p class="text-gray-700">Convert files into any format instantly</p>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="bg-orange-100 text-orange-500 w-8 h-8 flex items-center justify-center rounded-full">✓</div>
+          <p class="text-gray-700">Access your work anytime, anywhere</p>
+        </div>
+
+      </div>
+
+      <!-- CTA -->
+      <a href="./signup.html" class="mt-6 bg-orange-500 text-white px-8 py-3 rounded-full hover:scale-105 transition">
+        Try StudHub
+      </a>
+
+    </div>
+
+    <!-- RIGHT (VISUAL CARD) -->
+    <div class="md:w-1/2 relative">
+
+      <div class="bg-[#f9f6f3] p-8 rounded-2xl shadow-lg">
+
+        <h3 class="text-xl font-semibold mb-4">
+          Your Workspace Preview
+        </h3>
+
+        <div class="bg-white p-6 rounded-xl shadow space-y-3">
+
+          <div class="h-3 bg-gray-200 rounded w-3/4"></div>
+          <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          <div class="h-3 bg-gray-200 rounded w-2/3"></div>
+
+        </div>
+
+        <p class="text-gray-500 mt-4 text-sm">
+          Manage files, use AI, and stay organized in one dashboard.
+        </p>
+
+      </div>
+
+      <!-- Floating mini card -->
+      <div class="absolute -bottom-6 -right-6 bg-white px-4 py-2 rounded-full shadow text-sm">
+        ⚡ Fast & Smart
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="px-10 py-24 bg-[#f3e9e3] text-center">
+
+  <!-- Header -->
+  <div class="max-w-2xl mx-auto mb-16">
+    <h2 class="text-4xl font-bold text-gray-900 mb-4">
+      What Students Are Saying
+    </h2>
+    <p class="text-gray-600">
+      Real experiences from students using StudHub.
+    </p>
+  </div>
+
+  <!-- Testimonials -->
+  <div class="flex gap-8 overflow-x-auto pb-4 max-w-6xl mx-auto">
+
+    <!-- Card 1 -->
+    <div class="min-w-[300px] bg-white p-6 rounded-2xl shadow text-left">
+      <p class="text-gray-600 mb-4">
+        “StudHub made my assignments so much easier. The AI tools are a lifesaver.”
+      </p>
+      <div class="flex items-center gap-3">
+        <img src="..." class="w-10 h-10 rounded-full object-cover">
+        <div>
+          <h4 class="font-semibold">Michael A.</h4>
+          <p class="text-sm text-gray-500">Student</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="min-w-[300px] bg-white p-6 rounded-2xl shadow text-left">
+      <p class="text-gray-600 mb-4">
+        “I can upload, convert, and organize everything in one place. Super helpful.”
+      </p>
+      <div class="flex items-center gap-3">
+        <img src="..." class="w-10 h-10 rounded-full object-cover">
+        <div>
+          <h4 class="font-semibold">Sarah K.</h4>
+          <p class="text-sm text-gray-500">Undergraduate</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="min-w-[300px] bg-white p-6 rounded-2xl shadow text-left">
+      <p class="text-gray-600 mb-4">
+        “The file conversion feature alone saved me hours of stress.”
+      </p>
+      <div class="flex items-center gap-3">
+        <img src="..." class="w-10 h-10 rounded-full object-cover">
+        <div>
+          <h4 class="font-semibold">David T.</h4>
+          <p class="text-sm text-gray-500">Engineering Student</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- PRICING -->
+<section class="px-10 py-24 bg-white text-center">
+
+  <!-- Header -->
+  <div class="max-w-2xl mx-auto mb-16">
+    <h2 class="text-4xl font-bold text-gray-900 mb-4">
+      Simple, Transparent Pricing
+    </h2>
+    <p class="text-gray-600">
+      Start for free, upgrade when you need more power.
+    </p>
+  </div>
+
+  <!-- Pricing Cards -->
+  <div class="flex flex-wrap justify-center gap-10 max-w-5xl mx-auto">
+
+    <!-- Free Plan -->
+    <div class="bg-[#f9f6f3] p-10 rounded-2xl shadow w-[300px] text-left">
+
+      <h3 class="text-xl font-semibold mb-2">Free</h3>
+      <p class="text-gray-500 mb-6">Perfect to get started</p>
+
+      <p class="text-3xl font-bold mb-6">₦0</p>
+
+      <ul class="space-y-3 text-gray-600 mb-8">
+        <li>✓ 5 Free Trials</li>
+        <li>✓ Upload Files</li>
+        <li>✓ Basic AI Access</li>
+        <li>✓ Limited Conversions</li>
+      </ul>
+
+      <a href="./signup.html" class="w-full bg-gray-200 py-3 rounded-full">
+        Start Free
+      </a>
+
+    </div>
+
+    <!-- Pro Plan -->
+    <div class="bg-orange-500 text-white p-10 rounded-2xl shadow-lg w-[300px] text-left scale-105 relative">
+
+      <!-- Badge -->
+      <span class="absolute top-4 right-4 bg-white text-orange-500 text-xs px-3 py-1 rounded-full">
+        Popular
+      </span>
+
+      <h3 class="text-xl font-semibold mb-2">Pro</h3>
+      <p class="mb-6 opacity-90">For serious students</p>
+
+      <p class="text-3xl font-bold mb-6">₦2,000/mo</p>
+
+      <ul class="space-y-3 mb-8">
+        <li>✓ Unlimited Uploads</li>
+        <li>✓ Full AI Access</li>
+        <li>✓ Unlimited Conversions</li>
+        <li>✓ Priority Features</li>
+      </ul>
+
+      <a href="./pricing.html" class="w-full bg-white text-orange-500 py-3 rounded-full hover:scale-105 transition">
+        Upgrade Now
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CTA -->
+<section class="px-10 py-28 bg-orange-500 text-center text-white relative overflow-hidden">
+
+  <!-- Soft Glow Background -->
+  <div class="absolute -top-20 -left-20 w-[300px] h-[300px] bg-white/20 blur-3xl rounded-full"></div>
+  <div class="absolute bottom-0 right-0 w-[250px] h-[250px] bg-white/10 blur-2xl rounded-full"></div>
+
+  <!-- Content -->
+  <div class="max-w-2xl mx-auto relative z-10">
+
+    <h2 class="text-4xl md:text-5xl font-bold mb-6">
+      Ready to Take Control of Your Academic Life?
+    </h2>
+
+    <p class="mb-10 text-white/90 text-lg">
+      Join thousands of students using StudHub to stay organized, save time, and work smarter.
+    </p>
+
+    <div class="flex flex-col md:flex-row justify-center gap-4">
+
+      <a href="./signup.html" class="bg-white text-orange-500 px-8 py-4 rounded-full font-semibold hover:scale-105 transition">
+        Get Started Free
+      </a>
+
+      <a href="./features.html" class="border border-white px-8 py-4 rounded-full hover:bg-white hover:text-orange-500 transition">
+        Explore Features
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="bg-[#1f2937] text-white px-10 py-12">
+
+  <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-10">
+
+    <div>
+      <h3 class="text-xl font-bold mb-4">StudHub</h3>
+      <p class="text-gray-400">
+        Smart tools for smarter students.
+      </p>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Product</h4>
+      <ul class="space-y-2 text-gray-400">
+        <li><a href="./features.html">Features</a></li>
+        <li><a href="./pricing.html">Pricing</a></li>
+        <li><a href="./ai.html">AI Tools</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Company</h4>
+      <ul class="space-y-2 text-gray-400">
+        <li><a href="./about.html">About</a></li>
+        <li><a href="./contact.html">Contact</a></li>
+        <li><a href="./support.html">Support</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4 class="font-semibold mb-3">Legal</h4>
+      <ul class="space-y-2 text-gray-400">
+        <li><a href="./privacy.html">Privacy Policy</a></li>
+        <li><a href="./privacy.html">Terms</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="text-center text-gray-500 mt-10 text-sm">
+    © <span id="year"></span> StudHub. All rights reserved.
+  </div>
+
+</footer>
+
+
+<!-- carousel script -->
+<script>
+const carousel = document.getElementById("carousel");
+
+// Clone first slide and append
+const firstSlide = carousel.children[0].cloneNode(true);
+carousel.appendChild(firstSlide);
+
+let index = 0;
+
+function slide() {
+  index++;
+  carousel.style.transition = "transform 0.7s ease";
+  carousel.style.transform = `translateX(-${index * 100}%)`;
+
+  // Reset when reaching clone
+  if (index === carousel.children.length - 1) {
+    setTimeout(() => {
+      carousel.style.transition = "none";
+      carousel.style.transform = "translateX(0)";
+      index = 0;
+    }, 700);
+  }
+}
+
+setInterval(slide, 3000);
+</script>
+
+</script>
+
+<!-- Year Script -->
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+AOS.init({ once: true });
+</script>
+
+</body>
+</html>

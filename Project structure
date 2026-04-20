@@ -1,0 +1,37 @@
+studhub/
+│
+├── index.html          (Landing page)
+├── login.html
+├── signup.html
+├── dashboard.html
+├── upload.html
+├── files.html
+├── ai.html
+├── pricing.html
+├── profile.html
+│
+├── /assets
+│   ├── /css
+│   │   └── styles.css
+│   ├── /js
+│   │   ├── app.js
+│   │   ├── auth.js
+│   │   ├── upload.js
+│   │   ├── ai.js
+│   │   ├── payment.js
+│   │   └── utils.js
+│   └── /images
+│
+├── /components
+│    ├── navbar.js
+│   ├── sidebar.js
+│    └── loader.js
+│
+│
+├──    tailwind cdn 
+│    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+│
+├──     sweet alert cdn
+│    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+│
+└──

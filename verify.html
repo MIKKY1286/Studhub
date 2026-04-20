@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify OTP - StudHub</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+</style>
+</head>
+
+<body class="bg-[#f3e9e3] flex items-center justify-center min-h-screen">
+
+<div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md text-center">
+
+  <h2 class="text-3xl font-bold mb-2">Verify Email</h2>
+  <p class="text-gray-500 mb-6">Enter the OTP sent to your email</p>
+
+  <!-- OTP INPUT -->
+  <input 
+    id="otpInput"
+    type="text"
+    maxlength="6"
+    placeholder="Enter 6-digit OTP"
+    class="w-full p-3 border rounded-lg text-center text-xl tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-400"
+  >
+
+  <!-- VERIFY BUTTON -->
+  <button 
+    id="verifyBtn"
+    class="mt-5 w-full bg-orange-500 text-white py-3 rounded-full hover:scale-105 transition"
+  >
+    Verify
+  </button>
+
+  <!-- RESEND -->
+  <p class="mt-4 text-sm text-gray-600">
+    Didn’t get code?
+    <span id="resendOtp" class="text-orange-500 cursor-pointer font-medium">Resend</span>
+  </p>
+
+</div>
+
+<script type="module">
+
+import { signup } from "./assets/js/firebase.js";
+
+const verifyBtn = document.getElementById("verifyBtn");
+const resendBtn = document.getElementById("resendOtp");
+
+verifyBtn.onclick = async () => {
+  const enteredOtp = document.getElementById("otpInput").value;
+  const storedOtp = localStorage.getItem("otp");
+
+  if (enteredOtp !== storedOtp) {
+    Swal.fire("Invalid OTP", "Please check the code and try again", "error");
+    return;
+  }
+
+  const email = localStorage.getItem("email");
+  const password = localStorage.getItem("password");
+
+  try {
+    await signup(email, password);
+
+    // clear stored data
+    localStorage.removeItem("otp");
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+
+    Swal.fire("Success", "Account created successfully!", "success")
+    .then(() => {
+      window.location.href = "./login.html";
+    });
+
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  }
+};
+
+
+// RESEND OTP
+resendBtn.onclick = async () => {
+  const email = localStorage.getItem("email");
+
+  if (!email) {
+    Swal.fire("Error", "No email found. Please sign up again.", "error");
+    return;
+  }
+
+  const newOtp = Math.floor(100000 + Math.random() * 900000);
+  localStorage.setItem("otp", newOtp);
+
+  try {
+    await emailjs.send("service_ap0twre", "template_he9wyin", {
+      to_email: email,
+      otp: newOtp
+    });
+
+    Swal.fire("Sent", "New OTP has been sent", "success");
+
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  }
+};
+
+</script>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+(function(){
+  emailjs.init("kB2hGEEEYAYTlYaKb");
+})();
+</script>
+
+</body>
+</html>

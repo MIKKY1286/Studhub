@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up - StudHub</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+body { font-family: 'Poppins', sans-serif; }
+</style>
+</head>
+
+<body class="bg-[#f3e9e3]">
+
+<div class="min-h-screen flex flex-col md:flex-row">
+
+  <!-- LEFT SIDE (FORM) -->
+  <div class="w-full md:w-1/2 flex items-center justify-center p-8">
+
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+
+      <h2 class="text-3xl font-bold mb-2">Create Account</h2>
+      <p class="text-gray-500 mb-6">Start your journey with StudHub</p>
+
+      <form id="signupForm" class="space-y-4">
+
+        <!-- NAME -->
+        <input 
+          type="text" 
+          placeholder="Full Name"
+          required
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+        >
+
+        <!-- EMAIL -->
+        <input 
+          type="email" 
+          placeholder="Email Address"
+          required
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+        >
+
+        <!-- PASSWORD -->
+        <div class="relative">
+          <input 
+            type="password" 
+            id="password"
+            placeholder="Password"
+            required
+            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+          <span 
+            onclick="togglePassword()" 
+            class="absolute right-4 top-3 cursor-pointer text-gray-500"
+          >👁</span>
+        </div>
+
+        <!-- SUBMIT -->
+        <button 
+          type="submit"
+          class="w-full bg-orange-500 text-white py-3 rounded-full hover:scale-105 transition"
+        >
+          Sign Up
+        </button>
+
+      </form>
+
+      <!-- LOGIN LINK -->
+      <p class="mt-6 text-sm text-gray-600">
+        Already have an account?
+        <a href="login.html" class="text-orange-500 font-medium">Login</a>
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDE (VISUAL) -->
+  <div class="hidden md:flex w-1/2 bg-orange-500 items-center justify-center text-white p-10">
+
+    <div class="max-w-md text-center space-y-4">
+      <h2 class="text-4xl font-bold">
+        Welcome to StudHub
+      </h2>
+      <p class="opacity-90">
+        Upload assignments, use AI tools, convert files, and manage your academic life smarter.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PASSWORD TOGGLE -->
+<script>
+function togglePassword() {
+  const input = document.getElementById("password");
+  input.type = input.type === "password" ? "text" : "password";
+}
+</script>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+(function(){
+  emailjs.init("kB2hGEEEYAYTlYaKb");
+})();
+</script>
+
+<!-- FIREBASE AUTH HANDLER -->
+<script type="module" src="./assets/js/auth.js"></script>
+
+</body>
+</html>

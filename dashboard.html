@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudHub AI - Smart Learning Assistant</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            primary: '#10a37f',
+            'primary-dark': '#0d8a6a',
+            sidebar: '#202123',
+            'sidebar-hover': '#2a2b32',
+            'user-bubble': '#343541',
+            'ai-bubble': '#444654',
+            'input-bg': '#40414f',
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'fade-in': 'fadeIn 0.3s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: 0, transform: 'translateY(10px)' },
+              '100%': { opacity: 1, transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+                 Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
+    body { font-family: var(--font-sans); }
+  </style>
+  <style>
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #777; }
+    
+    /* Message animations */
+    .message { animation: fade-in 0.3s ease-out; }
+    
+    /* Typing indicator */
+    .typing-dot {
+      animation: typing 1.4s infinite ease-in-out;
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #8e8ea0;
+      margin: 0 2px;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    
+    /* Markdown styles */
+    .prose pre { 
+      background: #1e1f29; 
+      padding: 1rem; 
+      border-radius: 0.5rem; 
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+    .prose code { 
+      font-family: 'Fira Code', monospace; 
+      font-size: 0.9em;
+    }
+    .prose p { margin: 0.5rem 0; line-height: 1.6; }
+    .prose ul { list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
+    .prose ol { list-style-type: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
+    .prose a { color: #60a5fa; text-decoration: none; }
+    .prose a:hover { text-decoration: underline; }
+    
+    /* Mobile sidebar overlay */
+    .sidebar-overlay {
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    /* Button hover effects */
+    .btn-hover {
+      transition: all 0.2s ease;
+    }
+    .btn-hover:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+
+<body class="bg-[#343541] text-gray-100 font-sans antialiased">
+
+<div class="flex h-screen overflow-hidden">
+  
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="fixed md:static inset-y-0 left-0 z-40 w-72 bg-sidebar transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col">
+    
+    <!-- Sidebar Header -->
+    <div class="p-4 border-b border-gray-700">
+      <div class="flex items-center justify-between">
+        <h1 class="font-bold text-xl flex items-center gap-2">
+          <span class="text-primary">✦</span> StudHub AI
+        </h1>
+        <button id="closeSidebar" class="md:hidden text-gray-400 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">Your intelligent study companion</p>
+    </div>
+    
+    <!-- New Chat Button -->
+    <div class="p-3">
+      <button onclick="startNewChat()" class="w-full flex items-center gap-3 px-4 py-3 bg-primary hover:bg-primary-dark text-white rounded-lg btn-hover transition-all">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+        New Chat
+      </button>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1">
+      <button onclick="showTool('chat')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sidebar-hover transition-colors text-left group" id="nav-chat">
+        <span class="text-lg">💬</span>
+        <span class="font-medium">AI Chat</span>
+        <span class="ml-auto text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">Active</span>
+      </button>
+      <button onclick="showTool('upload')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sidebar-hover transition-colors text-left" id="nav-upload">
+        <span class="text-lg">📁</span>
+        <span>Upload Files</span>
+      </button>
+      <button onclick="showTool('convert')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sidebar-hover transition-colors text-left" id="nav-convert">
+        <span class="text-lg">🔄</span>
+        <span>Convert</span>
+      </button>
+      <button onclick="showTool('research')" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-sidebar-hover transition-colors text-left" id="nav-research">
+        <span class="text-lg">🔍</span>
+        <span>Research</span>
+      </button>
+      
+      <div class="pt-4 mt-4 border-t border-gray-700">
+        <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">History</p>
+        <div id="chatHistory" class="space-y-1 max-h-48 overflow-y-auto">
+          <!-- Chat history items will be inserted here -->
+        </div>
+      </div>
+    </nav>
+    
+    <!-- User Section -->
+    <div class="p-4 border-t border-gray-700">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <p class="text-sm font-medium" id="userEmailDisplay">user@example.com</p>
+          <p class="text-xs text-orange-400">
+            <span id="trialCountDisplay">15</span> trials left
+          </p>
+        </div>
+        <button onclick="upgrade()" class="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1.5 rounded-full btn-hover transition">
+          Upgrade
+        </button>
+      </div>
+      <button id="logoutBtn" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-sidebar-hover rounded-lg transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </aside>
+  
+  <!-- Sidebar Overlay (Mobile) -->
+  <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-30 md:hidden hidden" onclick="toggleSidebar()"></div>
+  
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Mobile Header -->
+    <header class="md:hidden flex items-center justify-between p-4 bg-sidebar border-b border-gray-700">
+      <button onclick="toggleSidebar()" class="text-gray-300 hover:text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <h1 class="font-bold">StudHub AI</h1>
+      <button onclick="startNewChat()" class="text-primary">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        </svg>
+      </button>
+    </header>
+    
+    <!-- Chat Area -->
+    <div id="chatContainer" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+      
+      <!-- Welcome Message -->
+      <div id="welcomeMessage" class="max-w-3xl mx-auto text-center py-12">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/20 mb-6">
+          <span class="text-3xl">✨</span>
+        </div>
+        <h2 class="text-2xl md:text-3xl font-bold mb-3">How can I help you today?</h2>
+        <p class="text-gray-400 mb-8 max-w-xl mx-auto">
+          Ask me anything about your studies, upload documents for analysis, convert files, or research topics with AI assistance.
+        </p>
+        
+        <!-- Suggestion Chips -->
+        <div class="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
+          <button onclick="sendSuggestion('Explain quantum physics simply')" class="px-4 py-2 bg-input-bg hover:bg-gray-600 rounded-full text-sm transition">
+            Explain quantum physics simply
+          </button>
+          <button onclick="sendSuggestion('Summarize this PDF')" class="px-4 py-2 bg-input-bg hover:bg-gray-600 rounded-full text-sm transition">
+            Summarize this PDF
+          </button>
+          <button onclick="sendSuggestion('Help me solve calculus problems')" class="px-4 py-2 bg-input-bg hover:bg-gray-600 rounded-full text-sm transition">
+            Calculus help
+          </button>
+          <button onclick="sendSuggestion('Research climate change impacts')" class="px-4 py-2 bg-input-bg hover:bg-gray-600 rounded-full text-sm transition">
+            Climate change research
+          </button>
+        </div>
+      </div>
+      
+      <!-- Messages will be inserted here -->
+      <div id="messages" class="max-w-3xl mx-auto space-y-6"></div>
+      
+      <!-- Typing Indicator (hidden by default) -->
+      <div id="typingIndicator" class="max-w-3xl mx-auto hidden">
+        <div class="flex items-start gap-4 p-4 rounded-xl bg-ai-bubble">
+          <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <span class="text-sm">🤖</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Input Area -->
+    <div class="border-t border-gray-700 p-4 bg-[#343541]">
+      <div class="max-w-3xl mx-auto">
+        <div class="relative flex items-end gap-3 bg-input-bg rounded-2xl p-2 focus-within:ring-2 focus-within:ring-primary/50 transition">
+          <textarea 
+            id="userInput" 
+            rows="1" 
+            placeholder="Message StudHub AI..." 
+            class="flex-1 bg-transparent border-0 text-white placeholder-gray-400 focus:ring-0 resize-none py-3 px-4 max-h-48 overflow-y-auto"
+            onkeydown="handleKeyDown(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button 
+            id="sendBtn"
+            onclick="sendMessage()" 
+            class="p-3 bg-primary hover:bg-primary-dark text-white rounded-xl btn-hover transition disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+            </svg>
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-2">
+          StudHub AI can make mistakes. Verify important information. • Free tier: <span id="footerTrialCount">15</span> messages remaining
+        </p>
+      </div>
+    </div>
+    
+    <!-- Tool Sections (Hidden by default) -->
+    <div id="toolSections" class="hidden flex-1 overflow-y-auto p-6">
+      <div class="max-w-3xl mx-auto">
+        
+        <!-- Upload Tool -->
+        <section id="uploadTool" class="tool-section hidden bg-[#444654] rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>📁</span> Upload Files
+          </h2>
+          <div class="border-2 border-dashed border-gray-600 rounded-xl p-8 text-center hover:border-primary/50 transition cursor-pointer" id="dropZone">
+            <input type="file" id="fileInput" class="hidden" multiple>
+            <label for="fileInput" class="cursor-pointer">
+              <div class="text-4xl mb-3">📤</div>
+              <p class="font-medium mb-1">Click to upload or drag & drop</p>
+              <p class="text-sm text-gray-400">PDF, DOCX, TXT, PPT (max 25MB)</p>
+            </label>
+          </div>
+          <div id="fileList" class="mt-4 space-y-2"></div>
+          <button onclick="useFeature('upload')" class="mt-4 bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-xl btn-hover transition">
+            Process Files
+          </button>
+        </section>
+        
+        <!-- Convert Tool -->
+        <section id="convertTool" class="tool-section hidden bg-[#444654] rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>🔄</span> Convert Files
+          </h2>
+          <div class="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium mb-2">Source File</label>
+              <input type="file" class="w-full p-3 bg-input-bg rounded-lg border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2">Convert To</label>
+              <select class="w-full p-3 bg-input-bg rounded-lg border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary">
+                <option>PDF</option>
+                <option>DOCX</option>
+                <option>TXT</option>
+                <option>Markdown</option>
+                <option>HTML</option>
+              </select>
+            </div>
+          </div>
+          <button onclick="useFeature('convert')" class="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-xl btn-hover transition">
+            Convert Now
+          </button>
+        </section>
+        
+        <!-- Research Tool -->
+        <section id="researchTool" class="tool-section hidden bg-[#444654] rounded-2xl p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>🔍</span> Research Assistant
+          </h2>
+          <div class="mb-4">
+            <input type="text" id="researchQuery" placeholder="Search academic sources, Wikipedia, journals..." 
+              class="w-full p-4 bg-input-bg rounded-xl border border-gray-600 focus:border-primary focus:ring-2 focus:ring-primary/30 transition">
+          </div>
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="px-3 py-1 bg-gray-700 rounded-full text-xs">Wikipedia</span>
+            <span class="px-3 py-1 bg-gray-700 rounded-full text-xs">Google Scholar</span>
+            <span class="px-3 py-1 bg-gray-700 rounded-full text-xs">arXiv</span>
+            <span class="px-3 py-1 bg-gray-700 rounded-full text-xs">PubMed</span>
+          </div>
+          <button onclick="useFeature('research')" class="bg-primary hover:bg-primary-dark text-white px-6 py-2.5 rounded-xl btn-hover transition">
+            Start Research
+          </button>
+          <div id="researchResults" class="mt-6 space-y-4"></div>
+        </section>
+        
+      </div>
+    </div>
+    
+  </main>
+</div>
+
+<!-- FIREBASE & APP LOGIC -->
+<script type="module">
+  // Firebase imports
+  import { auth } from "./assets/js/firebase.js";
+  import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  
+  // Auth state observer
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("userEmailDisplay").textContent = user.email;
+      // Initialize app after auth
+      initApp();
+    }
+  });
+  
+  // Logout handler
+  document.getElementById("logoutBtn").onclick = async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  };
+  
+  // Make functions globally available
+  window.logout = async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  };
+</script>
+
+<script>
+  // ==================== CONFIG ====================
+  // ⚠️ Replace with your actual Gemini API key or use a backend proxy
+  const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // Use environment variable in production
+  const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  
+  // ==================== STATE ====================
+  let trials = parseInt(localStorage.getItem("trials") || "15");
+  let currentTool = 'chat';
+  let chatHistory = JSON.parse(localStorage.getItem("chatHistory") || "[]");
+  let isGenerating = false;
+  
+  // ==================== INIT ====================
+  function initApp() {
+    updateTrialDisplay();
+    renderChatHistory();
+    setupEventListeners();
+    
+    // Enable send button when input has content
+    document.getElementById('userInput').addEventListener('input', function() {
+      document.getElementById('sendBtn').disabled = this.value.trim() === '';
+    });
+  }
+  
+  function updateTrialDisplay() {
+    document.getElementById("trialCountDisplay").textContent = trials;
+    document.getElementById("footerTrialCount").textContent = trials;
+  }
+  
+  // ==================== SIDEBAR & NAVIGATION ====================
+  function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const isClosed = sidebar.classList.contains('-translate-x-full');
+    
+    if (isClosed) {
+      sidebar.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    } else {
+      sidebar.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    }
+  }
+  
+  document.getElementById('closeSidebar').onclick = toggleSidebar;
+  
+  function showTool(toolName) {
+    // Update nav active state
+    document.querySelectorAll('[id^="nav-"]').forEach(el => {
+      el.classList.remove('bg-sidebar-hover');
+    });
+    document.getElementById(`nav-${toolName}`).classList.add('bg-sidebar-hover');
+    
+    // Hide all sections
+    document.getElementById('chatContainer').classList.add('hidden');
+    document.getElementById('toolSections').classList.add('hidden');
+    document.querySelectorAll('.tool-section').forEach(el => el.classList.add('hidden'));
+    
+    // Show selected section
+    if (toolName === 'chat') {
+      document.getElementById('chatContainer').classList.remove('hidden');
+      document.getElementById('welcomeMessage').classList.toggle('hidden', document.getElementById('messages').children.length > 0);
+    } else {
+      document.getElementById('toolSections').classList.remove('hidden');
+      document.getElementById(`${toolName}Tool`).classList.remove('hidden');
+    }
+    
+    currentTool = toolName;
+    
+    // Close sidebar on mobile
+    if (window.innerWidth < 768) {
+      toggleSidebar();
+    }
+  }
+  
+  function startNewChat() {
+    document.getElementById('messages').innerHTML = '';
+    document.getElementById('welcomeMessage').classList.remove('hidden');
+    document.getElementById('userInput').value = '';
+    document.getElementById('sendBtn').disabled = true;
+    
+    // Add to history
+    const chatId = Date.now();
+    chatHistory.unshift({ id: chatId, title: 'New Chat', timestamp: new Date().toISOString() });
+    if (chatHistory.length > 20) chatHistory.pop(); // Limit history
+    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+    renderChatHistory();
+    
+    showTool('chat');
+  }
+  
+  function renderChatHistory() {
+    const container = document.getElementById('chatHistory');
+    container.innerHTML = chatHistory.map(chat => `
+      <button onclick="loadChat(${chat.id})" class="w-full text-left px-4 py-2 rounded-lg hover:bg-sidebar-hover transition text-sm truncate">
+        ${chat.title}
+      </button>
+    `).join('');
+  }
+  
+  function loadChat(chatId) {
+    // In a real app, load messages from storage/backend
+    Swal.fire({
+      icon: 'info',
+      title: 'Chat History',
+      text: 'Loading chat history... (Demo: start a new chat)',
+      confirmButtonColor: '#10a37f'
+    });
+  }
+  
+  // ==================== CHAT FUNCTIONALITY ====================
+  function setupEventListeners() {
+    // File upload handling
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (dropZone) {
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('border-primary'), false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('border-primary'), false);
+      });
+      
+      dropZone.addEventListener('drop', handleDrop, false);
+      fileInput.addEventListener('change', handleFileSelect, false);
+    }
+    
+    // Auto-focus input on load
+    setTimeout(() => document.getElementById('userInput')?.focus(), 300);
+  }
+  
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+  }
+  
+  function handleFileSelect(e) {
+    handleFiles(e.target.files);
+  }
+  
+  function handleFiles(files) {
+    const list = document.getElementById('fileList');
+    list.innerHTML = '';
+    
+    Array.from(files).forEach(file => {
+      const item = document.createElement('div');
+      item.className = 'flex items-center justify-between p-3 bg-gray-700/50 rounded-lg';
+      item.innerHTML = `
+        <div class="flex items-center gap-3">
+          <span class="text-lg">📄</span>
+          <div>
+            <p class="text-sm font-medium truncate max-w-xs">${file.name}</p>
+            <p class="text-xs text-gray-400">${(file.size / 1024).toFixed(1)} KB</p>
+          </div>
+        </div>
+        <button class="text-gray-400 hover:text-red-400">×</button>
+      `;
+      list.appendChild(item);
+    });
+  }
+  
+  function autoResize(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 192) + 'px'; // max 6 rows
+  }
+  
+  function handleKeyDown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!document.getElementById('sendBtn').disabled) {
+        sendMessage();
+      }
+    }
+  }
+  
+  function sendSuggestion(text) {
+    document.getElementById('userInput').value = text;
+    document.getElementById('sendBtn').disabled = false;
+    sendMessage();
+  }
+  
+  async function sendMessage() {
+    const input = document.getElementById('userInput');
+    const message = input.value.trim();
+    if (!message || isGenerating || trials <= 0) {
+      if (trials <= 0) {
+        Swal.fire("Limit Reached", "Upgrade to continue using AI features", "warning");
+      }
+      return;
+    }
+
+
+    async function safeAsync(fn, fallback = null) {
+      try {
+      return await fn();
+        } catch (e) {
+            if (e.message?.includes('Receiving end does not exist')) {
+            return fallback;
+        }
+        console.error('Unexpected error:', e);
+         return fallback;
+        }
+    }
+    
+    // Hide welcome message
+    document.getElementById('welcomeMessage').classList.add('hidden');
+    
+    // Add user message
+    addMessage(message, 'user');
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('sendBtn').disabled = true;
+    
+    // Decrement trials
+    trials--;
+    localStorage.setItem("trials", trials);
+    updateTrialDisplay();
+    
+    // Show typing indicator
+    document.getElementById('typingIndicator').classList.remove('hidden');
+    document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
+    isGenerating = true;
+    
+    try {
+      // Call Gemini API
+      const response = await callGeminiAPI(message);
+      
+      // Hide typing indicator
+      document.getElementById('typingIndicator').classList.add('hidden');
+      
+      // Add AI response
+      addMessage(response, 'ai');
+      
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      document.getElementById('typingIndicator').classList.add('hidden');
+      addMessage("⚠️ Sorry, I encountered an error. Please try again or check your API configuration.", 'ai');
+      
+      // Show error details in dev mode
+      if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+        Swal.fire({
+          icon: 'warning',
+          title: 'API Key Not Configured',
+          html: `
+            <p class="text-left mb-3">To enable AI chat:</p>
+            <ol class="text-left list-decimal list-inside text-sm space-y-1">
+              <li>Get a Gemini API key from <a href="https://aistudio.google.com" target="_blank" class="text-blue-400">Google AI Studio</a></li>
+              <li>Replace <code>YOUR_GEMINI_API_KEY</code> in the script</li>
+              <li>Or set up a backend proxy for production</li>
+            </ol>
+          `,
+          confirmButtonColor: '#10a37f'
+        });
+      }
+    } finally {
+      isGenerating = false;
+      // Scroll to bottom
+      setTimeout(() => {
+        document.getElementById('chatContainer').scrollTop = document.getElementById('chatContainer').scrollHeight;
+      }, 100);
+    }
+  }
+  
+  async function callGeminiAPI(prompt) {
+    // ⚠️ In production: NEVER expose API keys in frontend. Use a backend proxy.
+    if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY") {
+      // Return demo response for UI testing
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      return `**This is a demo response.**\n\nTo enable real AI responses:\n\n1. Get a free Gemini API key from [Google AI Studio](https://aistudio.google.com)\n2. Replace \`YOUR_GEMINI_API_KEY\` in the code\n3. For production, route requests through your backend\n\n*Your query:* "${prompt.substring(0, 100)}${prompt.length > 100 ? '...' : ''}"`;
+    }
+    
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: `You are StudHub AI, a helpful study assistant for students. Be clear, accurate, and educational. Format responses with markdown for readability. Current context: Student using free tier with ${trials} trials remaining.\n\nUser: ${prompt}` }]
+        }],
+        generationConfig: {
+          temperature: 0.3,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        }
+      })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error?.message || 'API request failed');
+    }
+    
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
+  }
+  
+  function addMessage(content, role) {
+    const messagesContainer = document.getElementById('messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message flex gap-4 ${role === 'user' ? 'flex-row-reverse' : ''}`;
+    
+    const avatar = role === 'ai' 
+      ? `<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0"><span class="text-sm">🤖</span></div>`
+      : `<div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0"><span class="text-sm">👤</span></div>`;
+    
+    const bubbleColor = role === 'ai' ? 'bg-ai-bubble' : 'bg-user-bubble';
+    
+    // Render markdown for AI messages
+    const formattedContent = role === 'ai' 
+      ? marked.parse(content) 
+      : `<p>${content.replace(/\n/g, '<br>')}</p>`;
+    
+    messageDiv.innerHTML = `
+      ${avatar}
+      <div class="flex-1 min-w-0">
+        <div class="${bubbleColor} rounded-2xl px-5 py-3.5 prose prose-invert max-w-none">
+          ${formattedContent}
+        </div>
+        <div class="flex items-center gap-2 mt-2 ${role === 'user' ? 'justify-end' : ''}">
+          <span class="text-xs text-gray-500">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+          ${role === 'ai' ? `
+            <button onclick="copyMessage(this)" class="text-gray-500 hover:text-gray-300 transition" title="Copy">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </button>
+          ` : ''}
+        </div>
+      </div>
+    `;
+    
+    messagesContainer.appendChild(messageDiv);
+    
+    // Auto-scroll
+    const chatContainer = document.getElementById('chatContainer');
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  }
+  
+  function copyMessage(button) {
+    const message = button.closest('.message').querySelector('.prose').innerText;
+    navigator.clipboard.writeText(message).then(() => {
+      const originalIcon = button.innerHTML;
+      button.innerHTML = `<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>`;
+      setTimeout(() => button.innerHTML = originalIcon, 2000);
+    });
+  }
+  
+  // ==================== FEATURE USAGE ====================
+  function useFeature(feature) {
+    if (trials <= 0) {
+      Swal.fire("Limit Reached", "Upgrade to continue using this feature", "warning");
+      return;
+    }
+    
+    trials--;
+    localStorage.setItem("trials", trials);
+    updateTrialDisplay();
+    
+    const messages = {
+      upload: "📁 Files uploaded successfully! AI analysis ready.",
+      convert: "🔄 File conversion completed. Download your file below.",
+      research: "🔍 Research initiated. Results will appear shortly."
+    };
+    
+    Swal.fire({
+      icon: 'success',
+      title: messages[feature] || 'Success!',
+      text: `Trial count: ${trials} remaining`,
+      confirmButtonColor: '#10a37f',
+      timer: 2500,
+      showConfirmButton: false
+    });
+    
+    // In a real app: trigger actual feature logic here
+    if (feature === 'research') {
+      const query = document.getElementById('researchQuery')?.value || 'General research';
+      document.getElementById('researchResults').innerHTML = `
+        <div class="bg-gray-700/50 rounded-xl p-4 animate-pulse">
+          <div class="h-4 bg-gray-600 rounded w-3/4 mb-3"></div>
+          <div class="h-3 bg-gray-600 rounded w-full mb-2"></div>
+          <div class="h-3 bg-gray-600 rounded w-5/6"></div>
+        </div>
+      `;
+    }
+  }
+  
+  function upgrade() {
+    Swal.fire({
+      title: 'Upgrade to Pro',
+      html: `
+        <div class="text-left space-y-3">
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <span>Unlimited AI messages</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <span>Advanced file analysis (PDF, PPT, DOCX)</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <span>Priority research & citations</span>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-green-400 mt-1">✓</span>
+            <span>Export & collaboration tools</span>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-700">
+          <p class="text-2xl font-bold text-center">$9.99<span class="text-sm font-normal text-gray-400">/month</span></p>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Upgrade Now',
+      cancelButtonText: 'Maybe Later',
+      confirmButtonColor: '#f97316',
+      cancelButtonColor: '#6b7280',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Redirect to payment in real app
+        Swal.fire({
+          icon: 'success',
+          title: 'Redirecting...',
+          text: 'Proceeding to secure payment',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    });
+  }
+  
+  // Expose functions to global scope for onclick handlers
+  window.showTool = showTool;
+  window.startNewChat = startNewChat;
+  window.sendMessage = sendMessage;
+  window.sendSuggestion = sendSuggestion;
+  window.handleKeyDown = handleKeyDown;
+  window.autoResize = autoResize;
+  window.useFeature = useFeature;
+  window.upgrade = upgrade;
+  window.toggleSidebar = toggleSidebar;
+  window.copyMessage = copyMessage;
+</script>
+
+</body>
+</html>
