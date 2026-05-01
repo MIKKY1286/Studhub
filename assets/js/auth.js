@@ -1,45 +1,497 @@
-import { signup } from "./firebase.js";
+import {
+  signup,
+  login,
+  signInWithGoogle,
+  signInWithGithub,
+  logout
+} from "./firebase.js";
 
-const form = document.getElementById("signupForm");
 
-if (form) {
-  form.addEventListener("submit", async (e) => {
+// EMAILJS INIT
+emailjs.init("kB2hGEEEYAYTlYaKb");
+
+
+// ========================
+// SIGNUP
+// ========================
+
+const signupForm =
+document.getElementById("signupForm");
+
+if (signupForm) {
+
+  signupForm.addEventListener("submit", async (e) => {
+
     e.preventDefault();
 
-    const email = form.querySelector('input[type="email"]').value;
-    const password = form.querySelector('#password').value;
+    const name =
+    document.getElementById("name").value.trim();
 
-    // generate OTP
-    const otp = Math.floor(100000 + Math.random() * 900000);
+    const email =
+    signupForm.querySelector(
+      'input[type="email"]'
+    ).value.trim();
+
+    const password =
+    signupForm.querySelector(
+      "#password"
+    ).value.trim();
+
+    if (!name || !email || !password) {
+
+      Swal.fire(
+        "Error",
+        "Please fill all fields",
+        "error"
+      );
+
+      return;
+
+    }
 
     try {
-      // store OTP temporarily
+
+      // GENERATE OTP
+      const otp =
+      Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+
+      // OTP EXPIRY
+      const expiry =
+      Date.now() + (5 * 60 * 1000);
+
+      // STORE TEMP DATA
       localStorage.setItem("otp", otp);
-      localStorage.setItem("email", email);
-      localStorage.setItem("password", password);
 
-      // send email
-      await emailjs.send("service_ap0twre", "template_he9wyin", {
-        to_email: email,
-        otp: otp
+      localStorage.setItem(
+        "otpExpiry",
+        expiry
+      );
+
+      localStorage.setItem(
+        "tempName",
+        name
+      );
+
+      localStorage.setItem(
+        "tempEmail",
+        email
+      );
+
+      localStorage.setItem(
+        "tempPassword",
+        password
+      );
+
+      // SEND EMAIL
+      await emailjs.send(
+        "service_ap0twre",
+        "template_he9wyin",
+        {
+          to_email: email,
+          otp: otp,
+          user_name: name
+        }
+      );
+
+      Swal.fire(
+        "OTP Sent",
+        "Check your email for verification code",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../verify.html";
+
       });
 
-      Swal.fire("OTP Sent", "Check your email for verification code", "success")
-      .then(() => {
-        window.location.href = "../verify.html";
-      });
-
-    } catch (err) {
-      Swal.fire("Error", err.message, "error");
     }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
   });
+
 }
 
-const logoutBtn = document.getElementById("logoutBtn");
+
+// ========================
+// VERIFY OTP
+// ========================
+
+const verifyBtn =
+document.getElementById("verifyBtn");
+
+if (verifyBtn) {
+
+  verifyBtn.addEventListener("click", async () => {
+
+    const enteredOtp =
+    document.getElementById("otpInput")
+    .value.trim();
+
+    const storedOtp =
+    localStorage.getItem("otp");
+
+    const expiry =
+    localStorage.getItem("otpExpiry");
+
+    // CHECK EXPIRY
+    if (Date.now() > Number(expiry)) {
+
+      Swal.fire(
+        "Expired",
+        "OTP has expired",
+        "error"
+      );
+
+      return;
+
+    }
+
+    // CHECK OTP
+    if (enteredOtp !== storedOtp) {
+
+      Swal.fire(
+        "Invalid OTP",
+        "Please check the code again",
+        "error"
+      );
+
+      return;
+
+    }
+
+    const name =
+    localStorage.getItem("tempName");
+
+    const email =
+    localStorage.getItem("tempEmail");
+
+    const password =
+    localStorage.getItem("tempPassword");
+
+    try {
+
+      await signup(
+        name,
+        email,
+        password
+      );
+
+      // CLEAR STORAGE
+      localStorage.removeItem("otp");
+
+      localStorage.removeItem("otpExpiry");
+
+      localStorage.removeItem("tempName");
+
+      localStorage.removeItem("tempEmail");
+
+      localStorage.removeItem("tempPassword");
+
+      Swal.fire(
+        "Success",
+        "Account created successfully",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../login.html";
+
+      });
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
+  });
+
+}
+
+
+// ========================
+// RESEND OTP
+// ========================
+
+const resendBtn =
+document.getElementById("resendOtp");
+
+if (resendBtn) {
+
+  resendBtn.addEventListener("click", async () => {
+
+    const email =
+    localStorage.getItem("tempEmail");
+
+    const name =
+    localStorage.getItem("tempName");
+
+    if (!email) {
+
+      Swal.fire(
+        "Error",
+        "Signup session expired",
+        "error"
+      );
+
+      return;
+
+    }
+
+    try {
+
+      const newOtp =
+      Math.floor(
+        100000 + Math.random() * 900000
+      ).toString();
+
+      const expiry =
+      Date.now() + (5 * 60 * 1000);
+
+      localStorage.setItem(
+        "otp",
+        newOtp
+      );
+
+      localStorage.setItem(
+        "otpExpiry",
+        expiry
+      );
+
+      await emailjs.send(
+        "service_ap0twre",
+        "template_he9wyin",
+        {
+          to_email: email,
+          otp: newOtp,
+          user_name: name
+        }
+      );
+
+      Swal.fire(
+        "Success",
+        "New OTP sent",
+        "success"
+      );
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
+  });
+
+}
+
+
+// ========================
+// LOGIN
+// ========================
+
+const loginForm =
+document.getElementById("loginForm");
+
+if (loginForm) {
+
+  loginForm.addEventListener("submit", async (e) => {
+
+    e.preventDefault();
+
+    const email =
+    loginForm.querySelector(
+      'input[type="email"]'
+    ).value.trim();
+
+    const password =
+    loginForm.querySelector(
+      "#password"
+    ).value.trim();
+
+    try {
+
+      await login(
+        email,
+        password
+      );
+
+      Swal.fire(
+        "Success",
+        "Login successful",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../dashboard.html";
+
+      });
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
+  });
+
+}
+
+
+// ========================
+// GOOGLE SIGNUP / LOGIN
+// ========================
+
+const googleBtn =
+document.getElementById("googleSignup") ||
+document.getElementById("googleLogin");
+
+if (googleBtn) {
+
+  googleBtn.onclick = async () => {
+
+    try {
+
+      await signInWithGoogle();
+
+      Swal.fire(
+        "Success",
+        "Logged in with Google",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../dashboard.html";
+
+      });
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
+  };
+
+}
+
+
+// ========================
+// GITHUB SIGNUP / LOGIN
+// ========================
+
+const githubBtn =
+document.getElementById("githubSignup") ||
+document.getElementById("githubLogin");
+
+if (githubBtn) {
+
+  githubBtn.onclick = async () => {
+
+    try {
+
+      await signInWithGithub();
+
+      Swal.fire(
+        "Success",
+        "Logged in with GitHub",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../dashboard.html";
+
+      });
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
+  };
+
+}
+
+
+// ========================
+// LOGOUT
+// ========================
+
+const logoutBtn =
+document.getElementById("logoutBtn");
 
 if (logoutBtn) {
+
   logoutBtn.onclick = async () => {
-    await logout();
-    window.location.href = "../login.html";
+
+    try {
+
+      await logout();
+
+      Swal.fire(
+        "Logged Out",
+        "You have been logged out",
+        "success"
+      ).then(() => {
+
+        window.location.href =
+        "../login.html";
+
+      });
+
+    }
+
+    catch (err) {
+
+      Swal.fire(
+        "Error",
+        err.message,
+        "error"
+      );
+
+    }
+
   };
+
 }

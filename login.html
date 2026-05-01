@@ -1,127 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - StudHub</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Login - Stuent</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 <style>
-body { font-family: 'Poppins', sans-serif; }
+
+*{
+  font-family: 'Poppins', sans-serif;
+}
+
+.loader{
+  width:18px;
+  height:18px;
+  border:2px solid #fff;
+  border-top:2px solid transparent;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+  100%{
+    transform:rotate(360deg);
+  }
+}
+
 </style>
+
 </head>
 
-<body class="bg-[#f3e9e3]">
+<body class="bg-[#f3e9e3] overflow-x-hidden">
 
 <div class="min-h-screen flex flex-col md:flex-row">
 
-  <!-- LEFT SIDE -->
+  <!-- LEFT -->
   <div class="w-full md:w-1/2 flex items-center justify-center p-8">
 
-    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+    <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl">
 
-      <h2 class="text-3xl font-bold mb-2">Welcome Back</h2>
-      <p class="text-gray-500 mb-6">Login to your StudHub account</p>
+      <!-- HEADER -->
+      <div class="mb-8">
 
-      <form id="loginForm" class="space-y-4">
+        <h1 class="text-3xl font-bold text-gray-800">
+          Welcome Back
+        </h1>
+
+        <p class="text-gray-500 mt-2">
+          Login to continue your academic journey
+        </p>
+
+      </div>
+
+      <!-- FORM -->
+      <form id="loginForm" class="space-y-5">
 
         <!-- EMAIL -->
-        <input 
-          id="email"
-          type="email" 
-          placeholder="Email Address"
-          required
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
+        <div>
 
-        <!-- PASSWORD -->
-        <div class="relative">
-          <input 
-            id="password"
-            type="password" 
-            placeholder="Password"
+          <label class="text-sm text-gray-600 mb-2 block">
+            Email Address
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="Enter your email"
             required
-            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+            class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
           >
-          <span 
-            onclick="togglePassword()" 
-            class="absolute right-4 top-3 cursor-pointer text-gray-500"
-          >👁</span>
+
         </div>
 
-        <!-- SUBMIT -->
-        <button 
+        <!-- PASSWORD -->
+        <div>
+
+          <label class="text-sm text-gray-600 mb-2 block">
+            Password
+          </label>
+
+          <div class="relative">
+
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              required
+              class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
+            >
+
+            <button
+              type="button"
+              id="togglePassword"
+              class="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500"
+            >
+              👁
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- REMEMBER -->
+        <div class="flex items-center justify-between text-sm">
+
+          <label class="flex items-center gap-2 text-gray-600">
+
+            <input
+              type="checkbox"
+              id="rememberMe"
+            >
+
+            Remember me
+
+          </label>
+
+          <a
+            href="forgot-password.html"
+            class="text-orange-500 font-medium"
+          >
+            Forgot Password?
+          </a>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button
+          id="loginBtn"
           type="submit"
-          class="w-full bg-orange-500 text-white py-3 rounded-full hover:scale-105 transition"
+          class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-full font-semibold transition duration-300 flex items-center justify-center gap-2"
         >
-          Login
+
+          <span id="btnText">
+            Login
+          </span>
+
         </button>
 
       </form>
 
-      <!-- SIGNUP LINK -->
-      <p class="mt-6 text-sm text-gray-600">
+      <!-- DIVIDER -->
+      <div class="flex items-center my-6">
+
+        <div class="flex-1 h-px bg-gray-300"></div>
+
+        <span class="px-3 text-sm text-gray-500">
+          or continue with
+        </span>
+
+        <div class="flex-1 h-px bg-gray-300"></div>
+
+      </div>
+
+      <!-- GOOGLE -->
+      <button
+        id="googleLogin"
+        class="w-full border border-gray-200 hover:bg-gray-50 py-4 rounded-xl flex items-center justify-center gap-3 transition"
+      >
+
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          class="w-5"
+        >
+
+        Continue with Google
+
+      </button>
+
+      <!-- GITHUB -->
+      <button
+        id="githubLogin"
+        class="w-full border border-gray-200 hover:bg-gray-50 py-4 rounded-xl flex items-center justify-center gap-3 mt-4 transition"
+      >
+
+        <img
+          src="https://www.svgrepo.com/show/512317/github-142.svg"
+          class="w-5"
+        >
+
+        Continue with GitHub
+
+      </button>
+
+      <!-- SIGNUP -->
+      <p class="mt-8 text-center text-sm text-gray-600">
+
         Don’t have an account?
-        <a href="signup.html" class="text-orange-500 font-medium">Sign Up</a>
+
+        <a
+          href="signup.html"
+          class="text-orange-500 font-semibold"
+        >
+          Create Account
+        </a>
+
       </p>
 
     </div>
 
   </div>
 
-  <!-- RIGHT SIDE -->
-  <div class="hidden md:flex w-1/2 bg-orange-500 items-center justify-center text-white p-10">
+  <!-- RIGHT -->
+  <div class="hidden md:flex w-1/2 bg-orange-500 items-center justify-center p-12 text-white relative overflow-hidden">
 
-    <div class="max-w-md text-center space-y-4">
-      <h2 class="text-4xl font-bold">
-        Welcome Back
+    <div class="absolute w-96 h-96 bg-orange-400 rounded-full -top-20 -right-20 opacity-40"></div>
+
+    <div class="absolute w-72 h-72 bg-orange-300 rounded-full -bottom-10 -left-10 opacity-30"></div>
+
+    <div class="relative z-10 text-center max-w-lg">
+
+      <h2 class="text-5xl font-bold leading-tight">
+        Welcome Back to Stuent
       </h2>
-      <p class="opacity-90">
-        Continue managing your academic life smarter with StudHub.
+
+      <p class="mt-6 text-lg opacity-90 leading-relaxed">
+        Continue uploading assignments, using AI tools,
+        converting files, and managing your academic life smarter.
       </p>
+
     </div>
 
   </div>
 
-</div><a href=""></a>
+</div>
 
 <!-- PASSWORD TOGGLE -->
 <script>
-function togglePassword() {
-  const input = document.getElementById("password");
-  input.type = input.type === "password" ? "text" : "password";
-}
-</script>
 
-<!-- FIREBASE LOGIN -->
-<script type="module">
+const passwordInput =
+document.getElementById("password");
 
-import { login } from "./assets/js/firebase.js";
+document
+.getElementById("togglePassword")
+.addEventListener("click", () => {
 
-const form = document.getElementById("loginForm");
+  passwordInput.type =
+  passwordInput.type === "password"
+  ? "text"
+  : "password";
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  try {
-    await login(email, password);
-
-    Swal.fire("Success", "Login successful", "success")
-    .then(() => {
-      window.location.href = "./dashboard.html"; // change if needed
-    });
-
-  } catch (err) {
-    Swal.fire("Error", err.message, "error");
-  }
 });
 
 </script>
+
+<!-- EMAILJS -->
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<script>
+emailjs.init("kB2hGEEEYAYTlYaKb");
+</script>
+
+<!-- AUTH -->
+<script type="module" src="./assets/js/auth.js"></script>
 
 </body>
 </html>

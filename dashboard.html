@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>StudHub AI - Smart Learning Assistant</title>
+  <title>Stuent AI - Smart Learning Assistant</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -126,7 +126,7 @@
     <div class="p-4 border-b border-gray-700">
       <div class="flex items-center justify-between">
         <h1 class="font-bold text-xl flex items-center gap-2">
-          <span class="text-primary">✦</span> StudHub AI
+          <span class="text-primary">✦</span> Stuent AI
         </h1>
         <button id="closeSidebar" class="md:hidden text-gray-400 hover:text-white">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -210,7 +210,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </button>
-      <h1 class="font-bold">StudHub AI</h1>
+      <h1 class="font-bold">Stuent AI</h1>
       <button onclick="startNewChat()" class="text-primary">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
@@ -273,7 +273,7 @@
           <textarea 
             id="userInput" 
             rows="1" 
-            placeholder="Message StudHub AI..." 
+            placeholder="Message Stuent AI..." 
             class="flex-1 bg-transparent border-0 text-white placeholder-gray-400 focus:ring-0 resize-none py-3 px-4 max-h-48 overflow-y-auto"
             onkeydown="handleKeyDown(event)"
             oninput="autoResize(this)"
@@ -290,7 +290,7 @@
           </button>
         </div>
         <p class="text-xs text-gray-500 text-center mt-2">
-          StudHub AI can make mistakes. Verify important information. • Free tier: <span id="footerTrialCount">15</span> messages remaining
+          Stuent AI can make mistakes. Verify important information. • Free tier: <span id="footerTrialCount">15</span> messages remaining
         </p>
       </div>
     </div>
@@ -403,8 +403,7 @@
 
 <script>
   // ==================== CONFIG ====================
-  // ⚠️ Replace with your actual Gemini API key or use a backend proxy
-  const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // Use environment variable in production
+  const GEMINI_API_KEY = "AIzaSyBeQngrMANL8fUHkiKu9L5Ue6f9NXeafhM"; 
   const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
   
   // ==================== STATE ====================
@@ -689,7 +688,7 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         contents: [{
-          parts: [{ text: `You are StudHub AI, a helpful study assistant for students. Be clear, accurate, and educational. Format responses with markdown for readability. Current context: Student using free tier with ${trials} trials remaining.\n\nUser: ${prompt}` }]
+          parts: [{ text: `You are Stuent AI, a helpful study assistant for students. Be clear, accurate, and educational. Format responses with markdown for readability. Current context: Student using free tier with ${trials} trials remaining.\n\nUser: ${prompt}` }]
         }],
         generationConfig: {
           temperature: 0.3,

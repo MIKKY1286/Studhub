@@ -1,118 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sign Up - StudHub</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Sign Up - Stuent</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-body { font-family: 'Poppins', sans-serif; }
+*{
+  font-family: 'Poppins', sans-serif;
+}
+
+.loader{
+  width:18px;
+  height:18px;
+  border:2px solid #fff;
+  border-top:2px solid transparent;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+  100%{
+    transform:rotate(360deg);
+  }
+}
 </style>
 </head>
 
-<body class="bg-[#f3e9e3]">
+<body class="bg-[#f3e9e3] overflow-x-hidden">
 
 <div class="min-h-screen flex flex-col md:flex-row">
 
-  <!-- LEFT SIDE (FORM) -->
+  <!-- LEFT -->
   <div class="w-full md:w-1/2 flex items-center justify-center p-8">
 
-    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg">
+    <div class="w-full max-w-md bg-white p-8 rounded-3xl shadow-xl">
 
-      <h2 class="text-3xl font-bold mb-2">Create Account</h2>
-      <p class="text-gray-500 mb-6">Start your journey with StudHub</p>
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800">
+          Create Account
+        </h1>
+
+        <p class="text-gray-500 mt-2">
+          Start your journey with Stuent
+        </p>
+      </div>
 
       <form id="signupForm" class="space-y-4">
 
-        <!-- NAME -->
-        <input 
-          type="text" 
-          placeholder="Full Name"
-          required
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
+        <!-- FULL NAME -->
+        <div>
+          <input
+            type="text"
+            id="name"
+            placeholder="Full Name"
+            required
+            class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+        </div>
 
         <!-- EMAIL -->
-        <input 
-          type="email" 
-          placeholder="Email Address"
-          required
-          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
-        >
+        <div>
+          <input
+            type="email"
+            id="email"
+            placeholder="Email Address"
+            required
+            class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
+          >
+        </div>
 
         <!-- PASSWORD -->
         <div class="relative">
-          <input 
-            type="password" 
+
+          <input
+            type="password"
             id="password"
             placeholder="Password"
             required
-            class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+            minlength="6"
+            class="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400"
           >
-          <span 
-            onclick="togglePassword()" 
-            class="absolute right-4 top-3 cursor-pointer text-gray-500"
-          >👁</span>
+
+          <button
+            type="button"
+            id="togglePassword"
+            class="absolute top-1/2 right-4 -translate-y-1/2 text-gray-500"
+          >
+            👁
+          </button>
+
         </div>
 
-        <!-- SUBMIT -->
-        <button 
+        <!-- PASSWORD STRENGTH -->
+        <div>
+          <div class="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div id="strengthBar" class="h-full w-0 transition-all duration-300"></div>
+          </div>
+
+          <p id="strengthText" class="text-sm mt-1 text-gray-500"></p>
+        </div>
+
+        <!-- TERMS -->
+        <div class="flex items-start gap-2">
+
+          <input
+            type="checkbox"
+            id="terms"
+            required
+            class="mt-1"
+          >
+
+          <label for="terms" class="text-sm text-gray-600">
+            I agree to the Terms and Conditions
+          </label>
+
+        </div>
+
+        <!-- BUTTON -->
+        <button
+          id="signupBtn"
           type="submit"
-          class="w-full bg-orange-500 text-white py-3 rounded-full hover:scale-105 transition"
+          class="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-full font-semibold transition duration-300 flex items-center justify-center gap-2"
         >
-          Sign Up
+          <span id="btnText">Create Account</span>
         </button>
 
       </form>
 
-      <!-- LOGIN LINK -->
-      <p class="mt-6 text-sm text-gray-600">
+      <!-- DIVIDER -->
+      <div class="flex items-center my-6">
+
+        <div class="flex-1 h-px bg-gray-300"></div>
+
+        <span class="px-3 text-sm text-gray-500">
+          or
+        </span>
+
+        <div class="flex-1 h-px bg-gray-300"></div>
+
+      </div>
+
+      <!-- GOOGLE -->
+      <button
+        id="googleSignup"
+        class="w-full border border-gray-200 hover:bg-gray-50 py-4 rounded-xl flex items-center justify-center gap-3 transition"
+      >
+
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          class="w-5"
+        >
+
+        Continue with Google
+
+      </button>
+
+      <!-- GITHUB -->
+      <button
+        id="githubSignup"
+        class="w-full border border-gray-200 hover:bg-gray-50 py-4 rounded-xl flex items-center justify-center gap-3 mt-4 transition"
+      >
+
+        <img
+          src="https://www.svgrepo.com/show/512317/github-142.svg"
+          class="w-5"
+        >
+
+        Continue with GitHub
+
+      </button>
+
+      <!-- LOGIN -->
+      <p class="text-center text-sm text-gray-600 mt-6">
+
         Already have an account?
-        <a href="login.html" class="text-orange-500 font-medium">Login</a>
+
+        <a
+          href="login.html"
+          class="text-orange-500 font-semibold"
+        >
+          Login
+        </a>
+
       </p>
 
     </div>
 
   </div>
 
-  <!-- RIGHT SIDE (VISUAL) -->
-  <div class="hidden md:flex w-1/2 bg-orange-500 items-center justify-center text-white p-10">
+  <!-- RIGHT -->
+  <div class="hidden md:flex w-1/2 bg-orange-500 items-center justify-center p-12 text-white relative overflow-hidden">
 
-    <div class="max-w-md text-center space-y-4">
-      <h2 class="text-4xl font-bold">
-        Welcome to StudHub
+    <div class="absolute w-96 h-96 bg-orange-400 rounded-full -top-20 -right-20 opacity-40"></div>
+
+    <div class="absolute w-72 h-72 bg-orange-300 rounded-full -bottom-10 -left-10 opacity-30"></div>
+
+    <div class="relative z-10 text-center max-w-lg">
+
+      <h2 class="text-5xl font-bold leading-tight">
+        Welcome to Stuent
       </h2>
-      <p class="opacity-90">
-        Upload assignments, use AI tools, convert files, and manage your academic life smarter.
+
+      <p class="mt-6 text-lg opacity-90 leading-relaxed">
+        Upload assignments, use AI tools, convert files,
+        collaborate with students, and manage your
+        academic life smarter.
       </p>
+
     </div>
 
   </div>
 
 </div>
 
-<!-- PASSWORD TOGGLE -->
-<script>
-function togglePassword() {
-  const input = document.getElementById("password");
-  input.type = input.type === "password" ? "text" : "password";
-}
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+
+
+// EMAILJS
+emailjs.init("kB2hGEEEYAYTlYaKb");
+
+
+// 🔐 Your Firebase config 
+  const firebaseConfig = {
+    apiKey: "AIzaSyB77nJbhd2jcOrPSs9kM7mhBJhVX40F9mA",
+    authDomain: "aswed-2d60f.firebaseapp.com",
+    projectId: "aswed-2d60f",
+    storageBucket: "aswed-2d60f.firebasestorage.app",
+    messagingSenderId: "200170967490",
+    appId: "1:200170967490:web:962f3b12b6ced85caa465b",
+    measurementId: "G-3F489GKLHK"
+  };
+
+
+// INIT
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+// ELEMENTS
+const form = document.getElementById("signupForm");
+
+const signupBtn = document.getElementById("signupBtn");
+
+const btnText = document.getElementById("btnText");
+
+const passwordInput = document.getElementById("password");
+
+const strengthBar = document.getElementById("strengthBar");
+
+const strengthText = document.getElementById("strengthText");
+
+
+// TOGGLE PASSWORD
+document.getElementById("togglePassword").addEventListener("click", () => {
+
+  passwordInput.type =
+    passwordInput.type === "password"
+      ? "text"
+      : "password";
+
+});
+
+
+// PASSWORD STRENGTH
+passwordInput.addEventListener("input", () => {
+
+  const value = passwordInput.value;
+
+  let strength = 0;
+
+  if(value.length >= 6) strength++;
+  if(/[A-Z]/.test(value)) strength++;
+  if(/[0-9]/.test(value)) strength++;
+  if(/[^A-Za-z0-9]/.test(value)) strength++;
+
+  if(strength === 1){
+
+    strengthBar.style.width = "25%";
+    strengthBar.className = "h-full bg-red-500";
+    strengthText.innerText = "Weak Password";
+
+  }
+
+  else if(strength === 2){
+
+    strengthBar.style.width = "50%";
+    strengthBar.className = "h-full bg-yellow-500";
+    strengthText.innerText = "Medium Password";
+
+  }
+
+  else if(strength === 3){
+
+    strengthBar.style.width = "75%";
+    strengthBar.className = "h-full bg-blue-500";
+    strengthText.innerText = "Strong Password";
+
+  }
+
+  else if(strength === 4){
+
+    strengthBar.style.width = "100%";
+    strengthBar.className = "h-full bg-green-500";
+    strengthText.innerText = "Very Strong Password";
+
+  }
+
+  else{
+
+    strengthBar.style.width = "0%";
+    strengthText.innerText = "";
+
+  }
+
+});
+
+
+// SIGNUP
+form.addEventListener("submit", async (e) => {
+
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+
+  const email = document.getElementById("email").value.trim();
+
+  const password = passwordInput.value.trim();
+
+  if(!name || !email || !password){
+
+    Swal.fire(
+      "Missing Fields",
+      "Please complete all fields",
+      "warning"
+    );
+
+    return;
+
+  }
+
+  signupBtn.disabled = true;
+
+  btnText.innerHTML = `
+    <div class="loader"></div>
+  `;
+
+  try{
+
+    // OTP
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    // SAVE TEMP DATA
+    localStorage.setItem("otp", otp);
+
+    localStorage.setItem("tempName", name);
+
+    localStorage.setItem("tempEmail", email);
+
+    localStorage.setItem("tempPassword", password);
+
+    // SEND EMAIL
+    await emailjs.send(
+      "service_ap0twre",
+      "template_he9wyin",
+      {
+        to_email: email,
+        otp: otp,
+        user_name: name
+      }
+    );
+
+    Swal.fire({
+      icon: "success",
+      title: "OTP Sent",
+      text: "Verification code sent to your email"
+    }).then(() => {
+
+      window.location.href = "verify.html";
+
+    });
+
+  }
+
+  catch(error){
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+
+  }
+
+  finally{
+
+    signupBtn.disabled = false;
+
+    btnText.innerHTML = "Create Account";
+
+  }
+
+});
+
+
+// GOOGLE LOGIN
+document.getElementById("googleSignup").addEventListener("click", async () => {
+
+  try{
+
+    const provider = new GoogleAuthProvider();
+
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+
+      uid: user.uid,
+
+      name: user.displayName,
+
+      email: user.email,
+
+      photo: user.photoURL,
+
+      provider: "google",
+
+      createdAt: serverTimestamp()
+
+    });
+
+    Swal.fire(
+      "Success",
+      "Google sign in successful",
+      "success"
+    ).then(() => {
+
+      window.location.href = "dashboard.html";
+
+    });
+
+  }
+
+  catch(error){
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+
+  }
+
+});
+
+
+// GITHUB LOGIN
+document.getElementById("githubSignup").addEventListener("click", async () => {
+
+  try{
+
+    const provider = new GithubAuthProvider();
+
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+
+      uid: user.uid,
+
+      name: user.displayName || "GitHub User",
+
+      email: user.email,
+
+      photo: user.photoURL,
+
+      provider: "github",
+
+      createdAt: serverTimestamp()
+
+    });
+
+    Swal.fire(
+      "Success",
+      "GitHub sign in successful",
+      "success"
+    ).then(() => {
+
+      window.location.href = "dashboard.html";
+
+    });
+
+  }
+
+  catch(error){
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+
+  }
+
+});
+
 </script>
-
-<!-- EMAILJS -->
-<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<script>
-(function(){
-  emailjs.init("kB2hGEEEYAYTlYaKb");
-})();
-</script>
-
-<!-- FIREBASE AUTH HANDLER -->
-<script type="module" src="./assets/js/auth.js"></script>
 
 </body>
 </html>
