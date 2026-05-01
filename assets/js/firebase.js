@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  signInWithRedirect,
   GithubAuthProvider,
   updateProfile,
   sendPasswordResetEmail,

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
 
 <title>Sign Up - Stuent</title>
 
@@ -441,7 +442,7 @@ document.getElementById("googleSignup").addEventListener("click", async () => {
 
     const provider = new GoogleAuthProvider();
 
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithRedirect(auth, provider);
 
     const user = result.user;
 
@@ -451,7 +452,7 @@ document.getElementById("googleSignup").addEventListener("click", async () => {
 
       name: user.displayName,
 
-      email: user.email,
+      email: user.email || "",
 
       photo: user.photoURL,
 
@@ -493,7 +494,7 @@ document.getElementById("githubSignup").addEventListener("click", async () => {
 
     const provider = new GithubAuthProvider();
 
-    const result = await signInWithPopup(auth, provider);
+    const result = await signInWithRedirect(auth, provider);
 
     const user = result.user;
 
