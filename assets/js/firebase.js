@@ -103,7 +103,7 @@ export async function login(email, password){
 export async function signInWithGoogle(){
 
   const result =
-    await signInWithPopup(
+    await signInWithRedirect(
       auth,
       googleProvider
     );
