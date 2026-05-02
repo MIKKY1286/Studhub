@@ -41,6 +41,60 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 
 
+getRedirectResult(auth)
+.then(async (result) => {
+
+  if(result){
+
+    const user = result.user;
+
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+
+        uid: user.uid,
+
+        name:
+        user.displayName ||
+        "User",
+
+        email:
+        user.email || "",
+
+        photo:
+        user.photoURL || "",
+
+        provider:
+        result.providerId,
+
+        createdAt:
+        serverTimestamp()
+
+      },
+      { merge: true }
+    );
+
+    Swal.fire(
+      "Success",
+      "Authentication successful",
+      "success"
+    ).then(() => {
+
+      window.location.href =
+      "dashboard.html";
+
+    });
+
+  }
+
+})
+.catch((error) => {
+
+  console.error(error);
+
+});
+
+
 // GOOGLE PROVIDER
 const googleProvider = new GoogleAuthProvider();
 

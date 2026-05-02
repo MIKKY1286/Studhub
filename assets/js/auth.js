@@ -370,88 +370,68 @@ if (loginForm) {
 // GOOGLE SIGNUP / LOGIN
 // ========================
 
-const googleBtn =
-document.getElementById("googleSignup") ||
-document.getElementById("googleLogin");
+document.getElementById("googleSignup")
+.addEventListener("click", async () => {
 
-if (googleBtn) {
+  try{
 
-  googleBtn.onclick = async () => {
+    const provider =
+    new GoogleAuthProvider();
 
-    try {
+    await signInWithRedirect(
+      auth,
+      provider
+    );
 
-      await signInWithGoogle();
+  }
 
-      Swal.fire(
-        "Success",
-        "Logged in with Google",
-        "success"
-      ).then(() => {
+  catch(error){
 
-        window.location.href =
-        "../dashboard.html";
+    console.error(error);
 
-      });
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
 
-    }
+  }
 
-    catch (err) {
-
-      Swal.fire(
-        "Error",
-        err.message,
-        "error"
-      );
-
-    }
-
-  };
-
-}
+});
 
 
 // ========================
 // GITHUB SIGNUP / LOGIN
 // ========================
 
-const githubBtn =
-document.getElementById("githubSignup") ||
-document.getElementById("githubLogin");
+document.getElementById("githubSignup")
+.addEventListener("click", async () => {
 
-if (githubBtn) {
+  try{
 
-  githubBtn.onclick = async () => {
+    const provider =
+    new GithubAuthProvider();
 
-    try {
+    await signInWithRedirect(
+      auth,
+      provider
+    );
 
-      await signInWithGithub();
+  }
 
-      Swal.fire(
-        "Success",
-        "Logged in with GitHub",
-        "success"
-      ).then(() => {
+  catch(error){
 
-        window.location.href =
-        "../dashboard.html";
+    console.error(error);
 
-      });
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
 
-    }
+  }
 
-    catch (err) {
-
-      Swal.fire(
-        "Error",
-        err.message,
-        "error"
-      );
-
-    }
-
-  };
-
-}
+});
 
 
 // ========================
