@@ -4,10 +4,6 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  GithubAuthProvider,
   updateProfile,
   sendPasswordResetEmail,
   signOut
@@ -17,11 +13,12 @@ import {
   getFirestore,
   doc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 
 
-// FIREBASE CONFIG
+// 🔐 CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyB77nJbhd2jcOrPSs9kM7mhBJhVX40F9mA",
   authDomain: "aswed-2d60f.firebaseapp.com",
@@ -33,212 +30,85 @@ const firebaseConfig = {
 };
 
 
-// INIT
+// 🚀 INIT
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-
 export const db = getFirestore(app);
 
 
-getRedirectResult(auth)
-.then(async (result) => {
-
-  if(result){
-
-    const user = result.user;
-
-    await setDoc(
-      doc(db, "users", user.uid),
-      {
-
-        uid: user.uid,
-
-        name:
-        user.displayName ||
-        "User",
-
-        email:
-        user.email || "",
-
-        photo:
-        user.photoURL || "",
-
-        provider:
-        result.providerId,
-
-        createdAt:
-        serverTimestamp()
-
-      },
-      { merge: true }
-    );
-
-    Swal.fire(
-      "Success",
-      "Authentication successful",
-      "success"
-    ).then(() => {
-
-      window.location.href =
-      "dashboard.html";
-
-    });
-
-  }
-
-})
-.catch((error) => {
-
-  console.error(error);
-
-});
-
-
-// GOOGLE PROVIDER
-const googleProvider = new GoogleAuthProvider();
-
-
-// GITHUB PROVIDER
-const githubProvider = new GithubAuthProvider();
-
-
-// SIGNUP
+// 🧠 CREATE USER (SAFE + NO DUPLICATES OVERWRITE)
 export async function signup(name, email, password){
 
-  const userCredential =
-    await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
 
   const user = userCredential.user;
 
+  // set display name
   await updateProfile(user, {
     displayName: name
   });
 
-  await setDoc(doc(db, "users", user.uid), {
+  const userRef = doc(db, "users", user.uid);
+  const existing = await getDoc(userRef);
 
-    uid: user.uid,
+  // only create if not exists (prevents overwrite bugs)
+  if(!existing.exists()){
 
-    name: name,
+    await setDoc(userRef, {
+      uid: user.uid,
+      name,
+      email,
+      role: "student",
+      provider: "email",
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp()
+    });
 
-    email: email,
+  } else {
 
-    provider: "email",
+    // update login time only
+    await setDoc(userRef, {
+      lastLogin: serverTimestamp()
+    }, { merge: true });
 
-    createdAt: serverTimestamp()
+  }
 
-  });
-
-  return user;
-
+  return userCredential; // IMPORTANT FIX FOR YOUR OTP FLOW
 }
 
 
-// LOGIN
+// 🔐 LOGIN
 export async function login(email, password){
 
-  const userCredential =
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-  return userCredential.user;
-
-}
-
-
-// GOOGLE LOGIN
-export async function signInWithGoogle(){
-
-  const result =
-    await signInWithRedirect(
-      auth,
-      googleProvider
-    );
-
-  const user = result.user;
-
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-
-      uid: user.uid,
-
-      name: user.displayName,
-
-      email: user.email,
-
-      photo: user.photoURL,
-
-      provider: "google",
-
-      createdAt: serverTimestamp()
-
-    },
-    { merge: true }
-  );
-
-  return user;
-
-}
-
-
-// GITHUB LOGIN
-export async function signInWithGithub(){
-
-  const result =
-    await signInWithPopup(
-      auth,
-      githubProvider
-    );
-
-  const user = result.user;
-
-  await setDoc(
-    doc(db, "users", user.uid),
-    {
-
-      uid: user.uid,
-
-      name: user.displayName || "GitHub User",
-
-      email: user.email,
-
-      photo: user.photoURL,
-
-      provider: "github",
-
-      createdAt: serverTimestamp()
-
-    },
-    { merge: true }
-  );
-
-  return user;
-
-}
-
-
-// RESET PASSWORD
-export async function resetPassword(email){
-
-  return await sendPasswordResetEmail(
+  const userCredential = await signInWithEmailAndPassword(
     auth,
-    email
+    email,
+    password
   );
 
+  const user = userCredential.user;
+
+  // update login timestamp
+  await setDoc(doc(db, "users", user.uid), {
+    lastLogin: serverTimestamp()
+  }, { merge: true });
+
+  return userCredential;
 }
 
 
-// LOGOUT
+// 🔁 RESET PASSWORD
+export async function resetPassword(email){
+  return await sendPasswordResetEmail(auth, email);
+}
+
+
+// 🚪 LOGOUT
 export async function logout(){
-
   return await signOut(auth);
-
 }
